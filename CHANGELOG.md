@@ -10,6 +10,26 @@ this project adheres to
 
 ### Added
 
+- Make the WebAssembly signing core reproducible: both targets are built with
+  `-trimpath -buildvcs=false`, `scripts/reproduce-wasm.sh` rebuilds a tag twice
+  and writes `soroauth-wasm-checksums.txt`, and the release and npm package
+  publish that digest. A `reproduce-wasm` CI job rebuilds the published tag and
+  fails on any difference. (#558)
+
+- Add a WASI build of the signing core (`cmd/soroauthwasi`, `GOOS=wasip1`) that
+  speaks one JSON request over stdin and one response over stdout, needs no
+  JavaScript host, and replays the golden vectors under Node's WASI runtime.
+  Both wasm targets share `internal/wasmcore`. (#565)
+
+- Extend the composite action with `envelope` and `envelope-file` inputs, which
+  report every authorization entry by operation, index and address in the job
+  summary, plus a `fail-on` input for envelope-wide verdict conditions. (#559)
+
+- Add the mixed-arm e2e scenario: one transaction carries source-account,
+  legacy, V2 and delegates entries, and a negative control removes the V2
+  signature and requires the host to refuse it. The `modular-account` fixture
+  gains a `require_all` entry point for it. (#566)
+
 - Expose `Version` constant in the root package and document it in package docs,
   ensuring programmatic access to the library version and aligning CLI defaults
   with the library version. (#676)
